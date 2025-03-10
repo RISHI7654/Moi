@@ -16,16 +16,6 @@ INDRA_LOGO = """
 """
 print(INDRA_LOGO)
 
-# Reaction Options
-REACTIONS = {
-    "1": "LIKE",
-    "2": "LOVE",
-    "3": "HAHA",
-    "4": "WOW",
-    "5": "SAD",
-    "6": "ANGRY"
-}
-
 # Poll Vote Options
 POLL_VOTE_OPTIONS = {
     "1": "Vote using ID",
@@ -49,14 +39,6 @@ for key, value in POLL_VOTE_OPTIONS.items():
 
 vote_choice = input("Enter choice (1-3): ")
 
-# Reaction Type Input
-print("\nChoose Reaction Type:")
-for key, value in REACTIONS.items():
-    print(f"{key}: {value}")
-
-reaction_choice = input("Enter choice (1-6): ")
-reaction_type = REACTIONS.get(reaction_choice, "LIKE")
-
 # Read Cookies File
 with open(file_path, "r") as f:
     lines = f.read().splitlines()
@@ -66,15 +48,15 @@ def poll_vote(cookies, c_user, vote_type):
     try:
         if vote_type == "ID":
             # Poll vote using ID
-            url = f"https://mbasic.facebook.com/ufi/reaction/?ft_ent_identifier={poll_id}&reaction_type={reaction_choice}"
+            url = f"https://mbasic.facebook.com/ufi/reaction/?ft_ent_identifier={poll_id}&reaction_type=1"
 
         elif vote_type == "Page":
             # Poll vote using Page UID
-            url = f"https://mbasic.facebook.com/{poll_id}/reaction/?reaction_type={reaction_choice}&page_id=PAGE_UID"
+            url = f"https://mbasic.facebook.com/{poll_id}/reaction/?reaction_type=1&page_id=PAGE_UID"
 
         elif vote_type == "Both":
             # Poll vote using both ID and Page UID
-            url = f"https://mbasic.facebook.com/{poll_id}/reaction/?reaction_type={reaction_choice}&page_id=PAGE_UID&user_id={c_user}"
+            url = f"https://mbasic.facebook.com/{poll_id}/reaction/?reaction_type=1&page_id=PAGE_UID&user_id={c_user}"
 
         # Request Headers
         headers = {
@@ -86,7 +68,7 @@ def poll_vote(cookies, c_user, vote_type):
         response = requests.get(url, cookies=cookies, headers=headers)
         
         if response.status_code == 200:
-            print(f"✅ Voted {reaction_type} from ID: {c_user}")
+            print(f"✅ Voted from ID: {c_user}")
         else:
             print(f"❌ Failed to vote from ID: {c_user}")
 
