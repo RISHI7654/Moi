@@ -30,7 +30,10 @@ if not os.path.exists(file_path):
     exit()
 
 # Poll ID input
-poll_id = input("Enter Poll ID: ")
+poll_id = input("Enter Poll ID (the ID of the poll you want to vote on): ")
+
+# Page UID input (only needed if voting via Page UID or both)
+page_uid = input("Enter Page UID (if using Page UID or both for voting, leave blank if voting using ID only): ")
 
 # Poll Vote Option Input
 print("\nChoose Poll Vote Option:")
@@ -44,19 +47,17 @@ with open(file_path, "r") as f:
     lines = f.read().splitlines()
 
 # Poll Vote Function
-def poll_vote(cookies, c_user, vote_type):
+def poll_vote(cookies, c_user, vote_type, page_uid=""):
     try:
         if vote_type == "ID":
             # Poll vote using ID
             url = f"https://mbasic.facebook.com/ufi/reaction/?ft_ent_identifier={poll_id}&reaction_type=1"
-
         elif vote_type == "Page":
             # Poll vote using Page UID
-            url = f"https://mbasic.facebook.com/{poll_id}/reaction/?reaction_type=1&page_id=PAGE_UID"
-
+            url = f"https://mbasic.facebook.com/{poll_id}/reaction/?reaction_type=1&page_id={page_uid}"
         elif vote_type == "Both":
             # Poll vote using both ID and Page UID
-            url = f"https://mbasic.facebook.com/{poll_id}/reaction/?reaction_type=1&page_id=PAGE_UID&user_id={c_user}"
+            url = f"https://mbasic.facebook.com/{poll_id}/reaction/?reaction_type=1&page_id={page_uid}&user_id={c_user}"
 
         # Request Headers
         headers = {
@@ -89,10 +90,12 @@ for line in lines:
             # Poll voting based on user choice
             if vote_choice == "1":
                 poll_vote(cookies, c_user, "ID")
-            elif vote_choice == "2":
-                poll_vote(cookies, c_user, "Page")
-            elif vote_choice == "3":
-                poll_vote(cookies, c_user, "Both")
+            elif vote_choice == "2" and page_uid:
+                poll_vote(cookies, c_user, "Page", page_uid)
+            elif vote_choice == "3" and page_uid:
+                poll_vote(cookies, c_user, "Both", page_uid)
+            else:
+                print("⚠ Invalid choice or missing Page UID for voting option 2 or 3.")
             
             time.sleep(random.randint(3, 7))  # Random Delay to avoid detection
         except:
